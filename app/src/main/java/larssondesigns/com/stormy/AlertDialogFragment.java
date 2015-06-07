@@ -10,6 +10,7 @@ import android.os.Bundle;
  * Created by Willy on 2015-06-06.
  */
 public class AlertDialogFragment extends DialogFragment {
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Context context = getActivity();
