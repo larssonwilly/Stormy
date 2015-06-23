@@ -1,10 +1,12 @@
-package larssondesigns.com.stormy;
+package larssondesigns.com.stormy.ui;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.os.Bundle;
+
+import larssondesigns.com.stormy.R;
 
 /**
  * Created by Willy on 2015-06-06.
