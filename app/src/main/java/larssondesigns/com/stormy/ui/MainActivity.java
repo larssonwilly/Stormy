@@ -3,6 +3,9 @@ package larssondesigns.com.stormy.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v7.app.ActionBarActivity;
@@ -39,8 +42,12 @@ import larssondesigns.com.stormy.weather.Hour;
 public class MainActivity extends ActionBarActivity {
 
     public static final String TAG = MainActivity.class.getSimpleName();
+    public static final String DAILY_FORECAST = "DAILY_FORECAST";
+    public static final String HOURLY_FORECAST = "HOURLY_FORECAST";
 
     private Forecast mForecast;
+    private double longitude;
+    private double latitude;
 
     @InjectView(R.id.timeLabel) TextView mTimeLabel;
     @InjectView(R.id.temperatureLabel) TextView mTemperatureLabel;
@@ -58,8 +65,26 @@ public class MainActivity extends ActionBarActivity {
 
         mProgressBar.setVisibility(View.INVISIBLE);
 
-        final double latitude = 59.3333333;
-        final double longitude = 18.05;
+        // Acquire a reference to the system Location Manager
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        // Define a listener that responds to location updates
+        LocationListener locationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                // Called when a new location is found by the network location provider.
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+            }
+
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+            public void onProviderEnabled(String provider) {}
+
+            public void onProviderDisabled(String provider) {}
+        };
+
+        // Register the listener with the Location Manager to receive location updates from the network provider
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
         mRefreshImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -260,8 +285,15 @@ public class MainActivity extends ActionBarActivity {
     @OnClick(R.id.dailyButton)
     public void startDailyActivity(View view)   {
         Intent intent = new Intent(this, DailyForecastActivity.class);
+        intent.putExtra(DAILY_FORECAST, mForecast.getDailyForecast());
         startActivity(intent);
+    }
 
+    @OnClick (R.id.hourlyButton)
+    public void startHourlyActivity(View view)  {
+        Intent intent = new Intent(this, HourlyForecastActivity.class);
+        intent.putExtra(HOURLY_FORECAST, mForecast.getHourlyForeCast());
+        startActivity(intent);
     }
 
 }

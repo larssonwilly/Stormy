@@ -6,7 +6,8 @@
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="@dimen/activity_vertical_margin"
                 tools:context=".MainActivity"
-                android:background="@drawable/bg_gradient">
+                android:background="@drawable/bg_gradient"
+                android:id="@+id/">
 
     <TextView
         android:layout_width="wrap_content"
@@ -118,18 +119,6 @@
         </LinearLayout>
     </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Getting current weather..."
-        android:id="@+id/summaryLabel"
-        android:textColor="@android:color/white"
-        android:textIsSelectable="false"
-        android:textSize="18dp"
-        android:gravity="center_horizontal"
-        android:layout_above="@+id/linearLayout2"
-        android:layout_centerHorizontal="true"/>
-
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -174,5 +163,16 @@
             android:textColor="#FFFFFFFF"
             android:layout_marginLeft="2dp"/>
     </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Getting current weather..."
+        android:id="@+id/summaryLabel"
+        android:layout_below="@+id/linearLayout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:textSize="18dp"
+        android:textColor="@android:color/white"/>
 
 </RelativeLayout>
