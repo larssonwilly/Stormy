@@ -7,7 +7,7 @@
                 android:paddingTop="@dimen/activity_vertical_margin"
                 tools:context=".MainActivity"
                 android:background="@drawable/bg_gradient"
-                android:id="@+id/">
+                android:id="@+id/rel">
 
     <TextView
         android:layout_width="wrap_content"
