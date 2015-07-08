@@ -76,14 +76,3 @@ public class HourAdapter extends RecyclerView.Adapter<HourAdapter.HourViewHolder
 
 
 
-
-
-
-
-
-
-
-
-
-
-

@@ -2,7 +2,9 @@ package larssondesigns.com.stormy.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.graphics.drawable.Drawable;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -17,6 +19,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
@@ -39,15 +44,18 @@ import larssondesigns.com.stormy.weather.Forecast;
 import larssondesigns.com.stormy.weather.Hour;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     public static final String TAG = MainActivity.class.getSimpleName();
+    private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     public static final String DAILY_FORECAST = "DAILY_FORECAST";
     public static final String HOURLY_FORECAST = "HOURLY_FORECAST";
 
     private Forecast mForecast;
     private double longitude;
     private double latitude;
+
+    private GoogleApiClient mGoogleApiClient;
 
     @InjectView(R.id.timeLabel) TextView mTimeLabel;
     @InjectView(R.id.temperatureLabel) TextView mTemperatureLabel;
@@ -65,38 +73,49 @@ public class MainActivity extends ActionBarActivity {
 
         mProgressBar.setVisibility(View.INVISIBLE);
 
-        // Acquire a reference to the system Location Manager
-        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-        // Define a listener that responds to location updates
-        LocationListener locationListener = new LocationListener() {
-            public void onLocationChanged(Location location) {
-                // Called when a new location is found by the network location provider.
-                latitude = location.getLatitude();
-                longitude = location.getLongitude();
-            }
-
-            public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-            public void onProviderEnabled(String provider) {}
-
-            public void onProviderDisabled(String provider) {}
-        };
-
-        // Register the listener with the Location Manager to receive location updates from the network provider
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+        // connect to google play services and the location api
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
 
         mRefreshImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getForecast(latitude, longitude);
+                Log.d(TAG, "lat and long: " + latitude + " " + longitude);
             }
         });
 
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        // Acquire a reference to the system Location Manager
+        String locationProvider = LocationManager.NETWORK_PROVIDER;
+        Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
+
+        latitude = lastKnownLocation.getLatitude();
+        longitude = lastKnownLocation.getLongitude();
+
+        Log.d(TAG, "lat and long: " + latitude + " " + longitude);
         getForecast(latitude, longitude);
 
         Log.d(TAG, "Main UI code is running!");
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
     }
 
     private void getForecast(double latitude, double longitude) {
@@ -135,7 +154,7 @@ public class MainActivity extends ActionBarActivity {
                     });
                     try {
                         String jsonData = response.body().string();
-                        if (response.isSuccessful()) {
+                            if(response.isSuccessful()) {
                             mForecast = parseForecastDetails(jsonData);
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -294,6 +313,37 @@ public class MainActivity extends ActionBarActivity {
         Intent intent = new Intent(this, HourlyForecastActivity.class);
         intent.putExtra(HOURLY_FORECAST, mForecast.getHourlyForeCast());
         startActivity(intent);
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        if (mLastLocation == null) {
+            Log.d(TAG, "null");
+        }   else    {
+            Log.d(TAG, mLastLocation.toString());
+            latitude = mLastLocation.getLatitude();
+            longitude = mLastLocation.getLongitude();
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.i(TAG, "Location services suspended. Please reconnect.");
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        if (connectionResult.hasResolution()) {
+            try {
+                // Start an Activity that tries to resolve the error
+                connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
+            } catch (IntentSender.SendIntentException e) {
+                e.printStackTrace();
+            }
+        } else
+            Log.i(TAG, "Location services connection failed with code " + connectionResult.getErrorCode());
     }
 
 }
