@@ -330,7 +330,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
 
     @Override
     public void onConnectionSuspended(int i) {
-        Log.i(TAG, "Location services suspended. Please reconnect.");
+        Log.i(TAG, "Location services suspended. Please reconnect..");
     }
 
     @Override
