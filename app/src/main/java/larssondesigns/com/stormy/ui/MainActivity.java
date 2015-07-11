@@ -320,7 +320,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
         Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
         if (mLastLocation == null) {
-            Log.d(TAG, "null");
+            Log.d(TAG, "null...");
         }   else    {
             Log.d(TAG, mLastLocation.toString());
             latitude = mLastLocation.getLatitude();
