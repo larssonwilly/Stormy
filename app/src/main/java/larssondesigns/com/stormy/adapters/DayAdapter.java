@@ -44,7 +44,7 @@ public class DayAdapter extends BaseAdapter {
         ViewHolder holder;
 
         if (convertView == null) {
-            //brand new
+            //xml to code that can be used
             convertView = LayoutInflater.from(mContext).inflate(R.layout.daily_list_item, null);
             holder = new ViewHolder();
             holder.iconImageView = (ImageView) convertView.findViewById(R.id.iconImageView);
