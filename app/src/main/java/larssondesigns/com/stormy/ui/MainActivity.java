@@ -55,7 +55,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     private double longitude;
     private double latitude;
 
-    private GoogleApiClient mGoogleApiClient;
+    private GoogleApiClient mGoogleApiClient; //comment
 
     @InjectView(R.id.timeLabel) TextView mTimeLabel;
     @InjectView(R.id.temperatureLabel) TextView mTemperatureLabel;
@@ -154,7 +154,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
                     });
                     try {
                         String jsonData = response.body().string();
-                            if(response.isSuccessful()) {
+                        if(response.isSuccessful()) {
                             mForecast = parseForecastDetails(jsonData);
                             runOnUiThread(new Runnable() {
                                 @Override
