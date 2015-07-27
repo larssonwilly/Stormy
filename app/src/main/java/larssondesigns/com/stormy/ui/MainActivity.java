@@ -62,6 +62,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     @InjectView(R.id.humidityValue) TextView mHumidityValue;
     @InjectView(R.id.precipValue) TextView mPrecipValue;
     @InjectView(R.id.summaryLabel) TextView mSummaryLabel;
+    @InjectView(R.id.locationLabel) TextView mLocationLabel;
     @InjectView(R.id.iconImageView) ImageView mIconImageView;
     @InjectView(R.id.refreshImageView) ImageView mRefreshImageView;
     @InjectView(R.id.progressBar) ProgressBar mProgressBar;
@@ -162,7 +163,6 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
                                     updateDisplay();
                                 }
                             });
-
                         } else {
                             alertUserAboutError();
                         }
@@ -197,6 +197,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
         mHumidityValue.setText(current.getHumidity() + "");
         mPrecipValue.setText(current.getPrecipChance() + "%");
         mSummaryLabel.setText(current.getSummary());
+        mLocationLabel.setText(current.getTimeZone());
 
         Drawable drawable = getResources().getDrawable(current.getIconId());
         mIconImageView.setImageDrawable(drawable);
